@@ -1,0 +1,300 @@
+
+// These tests are copied 2021-03-09 from http://developforperformance.com/MatchingWildcards_AnImprovedAlgorithmForBigData.html And modified For Coolbasic & cbUnit by Jarkko Linnanvirta.
+// The tests can be run with cbUnit: https://github.com/Taitava/cbUnit
+//
+// Copyright and license of the original tests:
+//
+// Copyright 2018 IBM Corporation
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+Include "GeneralTextCompare.cb"
+
+// Note: All single character wildcard tests are commented out (with ' ) because our version of GTC does not support single character wild cards. ? = single character wild card.
+
+Function test_Wild()
+	
+	// Case with first wildcard After total match.
+	AssertGTC("Hi", "Hi*", True)
+	
+	// Case with mismatch After '*'
+	AssertGTC("abc", "ab*d", False)
+	
+	// Cases with repeating character sequences.
+	AssertGTC("abcccd", "*ccd", True)
+	AssertGTC("mississipissippi", "*issip*ss*", True)
+	AssertGTC("xxxx*zzzzzzzzy*f", "xxxx*zzy*fffff", False)
+	AssertGTC("xxxx*zzzzzzzzy*f", "xxx*zzy*f", True)
+	AssertGTC("xxxxzzzzzzzzyf", "xxxx*zzy*fffff", False)
+	AssertGTC("xxxxzzzzzzzzyf", "xxxx*zzy*f", True)
+	AssertGTC("xyxyxyzyxyz", "xy*z*xyz", True)
+	AssertGTC("mississippi", "*sip*", True)
+	AssertGTC("xyxyxyxyz", "xy*xyz", True)
+	AssertGTC("mississippi", "mi*sip*", True)
+	AssertGTC("ababac", "*abac*", True)
+	AssertGTC("ababac", "*abac*", True)
+	AssertGTC("aaazz", "a*zz*", True)
+	AssertGTC("a12b12", "*12*23", False)
+	AssertGTC("a12b12", "a12b", False)
+	AssertGTC("a12b12", "*12*12*", True)
+	
+	// From DDJ reader Andy Belf
+	'AssertGTC("caaab", "*a?b", True)
+	
+	// Additional cases where the '*' char appears in the tame string.
+	AssertGTC("*", "*", True)
+	AssertGTC("a*abab", "a*b", True)
+	AssertGTC("a*r", "a*", True)
+	AssertGTC("a*ar", "a*aar", False)
+
+	// More double wildcard scenarios.
+	AssertGTC("XYXYXYZYXYz", "XY*Z*XYz", True)
+	AssertGTC("missisSIPpi", "*SIP*", True)
+	AssertGTC("mississipPI", "*issip*PI", True)
+	AssertGTC("xyxyxyxyz", "xy*xyz", True)
+	AssertGTC("miSsissippi", "mi*sip*", True)
+	AssertGTC("miSsissippi", "mi*Sip*", False)
+	AssertGTC("abAbac", "*Abac*", True)
+	AssertGTC("abAbac", "*Abac*", True)
+	AssertGTC("aAazz", "a*zz*", True)
+	AssertGTC("A12b12", "*12*23", False)
+	AssertGTC("a12B12", "*12*12*", True)
+	AssertGTC("oWn", "*oWn*", True)
+
+	// Completely tame (no wildcards) cases.
+	AssertGTC("bLah", "bLah", True)
+	AssertGTC("bLah", "bLaH", False)
+
+	// Simple mixed wildcard tests suggested by Marlin Deckert.
+	'AssertGTC("a", "*?", True)
+	'AssertGTC("ab", "*?", True)
+	'AssertGTC("abc", "*?", True)
+
+	// More mixed wildcard tests including coverage for False positives.
+	'AssertGTC("a", "??", False)
+	'AssertGTC("ab", "?*?", True)
+	'AssertGTC("ab", "*?*?*", True)
+	'AssertGTC("abc", "?**?*?", True)
+	'AssertGTC("abc", "?**?*&?", False)
+	'AssertGTC("abcd", "?b*??", True)
+	'AssertGTC("abcd", "?a*??", False)
+	'AssertGTC("abcd", "?**?c?", True)
+	'AssertGTC("abcd", "?**?d?", False)
+	'AssertGTC("abcde", "?*b*?*d*?", True)
+
+	// Single-character-match cases.
+	'AssertGTC("bLah", "bL?h", True)
+	'AssertGTC("bLaaa", "bLa?", False)
+	'AssertGTC("bLah", "bLa?", True)
+	'AssertGTC("bLaH", "?Lah", False)
+	'AssertGTC("bLaH", "?LaH", True)
+
+	// Many-wildcard scenarios.
+	AssertGTC("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab", "a*a*a*a*a*a*aa*aaa*a*a*b", True)
+	AssertGTC("abababababababababababababababababababaacacacacacacacadaeafagahaiajakalaaaaaaaaaaaaaaaaaffafagaagggagaaaaaaaab", "*a*b*ba*ca*a*aa*aaa*fa*ga*b*", True)
+	AssertGTC("abababababababababababababababababababaacacacacacacacadaeafagahaiajakalaaaaaaaaaaaaaaaaaffafagaagggagaaaaaaaab", "*a*b*ba*ca*a*x*aaa*fa*ga*b*", False)
+	AssertGTC("abababababababababababababababababababaacacacacacacacadaeafagahaiajakalaaaaaaaaaaaaaaaaaffafagaagggagaaaaaaaab", "*a*b*ba*ca*aaaa*fa*ga*gggg*b*", False)
+	AssertGTC("abababababababababababababababababababaacacacacacacacadaeafagahaiajakalaaaaaaaaaaaaaaaaaffafagaagggagaaaaaaaab", "*a*b*ba*ca*aaaa*fa*ga*ggg*b*", True)
+	AssertGTC("aaabbaabbaab", "*aabbaa*a*", True)
+	AssertGTC("a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*", "a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*", True)
+	AssertGTC("aaaaaaaaaaaaaaaaa", "*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*", True)
+	AssertGTC("aaaaaaaaaaaaaaaa", "*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*a*", False)
+	AssertGTC("abc*abcd*abcde*abcdef*abcdefg*abcdefgh*abcdefghi*abcdefghij*abcdefghijk*abcdefghijkl*abcdefghijklm*abcdefghijklmn", "abc*abc*abc*abc*abc*abc*abc*abc*abc*abc*abc*abc*abc*abc*abc*abc*abc*", False)
+	AssertGTC("abc*abcd*abcde*abcdef*abcdefg*abcdefgh*abcdefghi*abcdefghij*abcdefghijk*abcdefghijkl*abcdefghijklm*abcdefghijklmn", "abc*abc*abc*abc*abc*abc*abc*abc*abc*abc*abc*abc*", True)
+	AssertGTC("abc*abcd*abcd*abc*abcd", "abc*abc*abc*abc*abc", False)
+	AssertGTC("abc*abcd*abcd*abc*abcd*abcd*abc*abcd*abc*abc*abcd", "abc*abc*abc*abc*abc*abc*abc*abc*abc*abc*abcd", True)
+	AssertGTC("abc", "********a********b********c********", True)
+	AssertGTC("********a********b********c********", "abc", False)
+	AssertGTC("abc", "********a********b********b********", False)
+	AssertGTC("*abc*", "***a*b*c***", True)
+
+	// A case-insensitive algorithm test.
+	AssertGTC("mississippi", "*issip*PI", True, False)
+
+	// Tests suggested by other DDJ readers
+	'AssertGTC("", "?", False)
+	'AssertGTC("", "*?", False)
+	AssertGTC("", "", True)
+	AssertGTC("a", "", False)
+EndFunction
+
+Function test_Tame()
+	
+	// Case with last character mismatch.
+	AssertGTC("abc", "abd", False)
+
+	// Cases with repeating character sequences.
+	AssertGTC("abcccd", "abcccd", True)
+	AssertGTC("mississipissippi", "mississipissippi", True)
+	AssertGTC("xxxxzzzzzzzzyf", "xxxxzzzzzzzzyfffff", False)
+	AssertGTC("xxxxzzzzzzzzyf", "xxxxzzzzzzzzyf", True)
+	AssertGTC("xxxxzzzzzzzzyf", "xxxxzzy.fffff", False)
+	AssertGTC("xxxxzzzzzzzzyf", "xxxxzzzzzzzzyf", True)
+	AssertGTC("xyxyxyzyxyz", "xyxyxyzyxyz", True)
+	AssertGTC("mississippi", "mississippi", True)
+	AssertGTC("xyxyxyxyz", "xyxyxyxyz", True)
+	AssertGTC("m ississippi", "m ississippi", True)
+	'AssertGTC("ababac", "ababac?", False)
+	AssertGTC("dababac", "ababac", False)
+	AssertGTC("aaazz", "aaazz", True)
+	AssertGTC("a12b12", "1212", False)
+	AssertGTC("a12b12", "a12b", False)
+	AssertGTC("a12b12", "a12b12", True)
+
+	// A mix of cases
+	AssertGTC("n", "n", True)
+	AssertGTC("aabab", "aabab", True)
+	AssertGTC("ar", "ar", True)
+	AssertGTC("aar", "aaar", False)
+	AssertGTC("XYXYXYZYXYz", "XYXYXYZYXYz", True)
+	AssertGTC("missisSIPpi", "missisSIPpi", True)
+	AssertGTC("mississipPI", "mississipPI", True)
+	AssertGTC("xyxyxyxyz", "xyxyxyxyz", True)
+	AssertGTC("miSsissippi", "miSsissippi", True)
+	AssertGTC("miSsissippi", "miSsisSippi", False)
+	AssertGTC("abAbac", "abAbac", True)
+	AssertGTC("abAbac", "abAbac", True)
+	AssertGTC("aAazz", "aAazz", True)
+	AssertGTC("A12b12", "A12b123", False)
+	AssertGTC("a12B12", "a12B12", True)
+	AssertGTC("oWn", "oWn", True)
+	AssertGTC("bLah", "bLah", True)
+	AssertGTC("bLah", "bLaH", False)
+
+	// Single '?' cases.
+	AssertGTC("a", "a", True)
+	'AssertGTC("ab", "a?", True)
+	'AssertGTC("abc", "ab?", True)
+
+	// Mixed '?' cases.
+	'AssertGTC("a", "??", False)
+	'AssertGTC("ab", "??", True)
+	'AssertGTC("abc", "???", True)
+	'AssertGTC("abcd", "????", True)
+	'AssertGTC("abc", "????", False)
+	'AssertGTC("abcd", "?b??", True)
+	'AssertGTC("abcd", "?a??", False)
+	'AssertGTC("abcd", "??c?", True)
+	'AssertGTC("abcd", "??d?", False)
+	'AssertGTC("abcde", "?b?d*?", True)
+
+	// Longer string scenarios.
+	AssertGTC("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab", True)
+	AssertGTC("abababababababababababababababababababaacacacacacacacadaeafagahaiajakalaaaaaaaaaaaaaaaaaffafagaagggagaaaaaaaab", "abababababababababababababababababababaacacacacacacacadaeafagahaiajakalaaaaaaaaaaaaaaaaaffafagaagggagaaaaaaaab", True)
+	AssertGTC("abababababababababababababababababababaacacacacacacacadaeafagahaiajakalaaaaaaaaaaaaaaaaaffafagaagggagaaaaaaaab", "abababababababababababababababababababaacacacacacacacadaeafagahaiajaxalaaaaaaaaaaaaaaaaaffafagaagggagaaaaaaaab", False)
+	AssertGTC("abababababababababababababababababababaacacacacacacacadaeafagahaiajakalaaaaaaaaaaaaaaaaaffafagaagggagaaaaaaaab", "abababababababababababababababababababaacacacacacacacadaeafagahaiajakalaaaaaaaaaaaaaaaaaffafagaggggagaaaaaaaab", False)
+	AssertGTC("abababababababababababababababababababaacacacacacacacadaeafagahaiajakalaaaaaaaaaaaaaaaaaffafagaagggagaaaaaaaab", "abababababababababababababababababababaacacacacacacacadaeafagahaiajakalaaaaaaaaaaaaaaaaaffafagaagggagaaaaaaaab", True)
+	AssertGTC("aaabbaabbaab", "aaabbaabbaab", True)
+	AssertGTC("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", True)
+	AssertGTC("aaaaaaaaaaaaaaaaa", "aaaaaaaaaaaaaaaaa", True)
+	AssertGTC("aaaaaaaaaaaaaaaa", "aaaaaaaaaaaaaaaaa", False)
+	AssertGTC("abcabcdabcdeabcdefabcdefgabcdefghabcdefghiabcdefghijabcdefghijkabcdefghijklabcdefghijklmabcdefghijklmn", "abcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabc", False)
+	AssertGTC("abcabcdabcdeabcdefabcdefgabcdefghabcdefghiabcdefghijabcdefghijkabcdefghijklabcdefghijklmabcdefghijklmn", "abcabcdabcdeabcdefabcdefgabcdefghabcdefghiabcdefghijabcdefghijkabcdefghijklabcdefghijklmabcdefghijklmn", True)
+	'AssertGTC("abcabcdabcdabcabcd", "abcabc?abcabcabc", False)
+	'AssertGTC("abcabcdabcdabcabcdabcdabcabcdabcabcabcd", "abcabc?abc?abcabc?abc?abc?bc?abc?bc?bcd", True)
+	'AssertGTC("?abc?", "?abc?", True)
+EndFunction
+
+Function test_Empty()
+	
+	// A simple case
+	AssertGTC("", "abd", False)
+
+	// Cases with repeating character sequences
+	AssertGTC("", "abcccd", False)
+	AssertGTC("", "mississipissippi", False)
+	AssertGTC("", "xxxxzzzzzzzzyfffff", False)
+	AssertGTC("", "xxxxzzzzzzzzyf", False)
+	AssertGTC("", "xxxxzzy.fffff", False)
+	AssertGTC("", "xxxxzzzzzzzzyf", False)
+	AssertGTC("", "xyxyxyzyxyz", False)
+	AssertGTC("", "mississippi", False)
+	AssertGTC("", "xyxyxyxyz", False)
+	AssertGTC("", "m ississippi", False)
+	AssertGTC("", "ababac*", False)
+	AssertGTC("", "ababac", False)
+	AssertGTC("", "aaazz", False)
+	AssertGTC("", "1212", False)
+	AssertGTC("", "a12b", False)
+	AssertGTC("", "a12b12", False)
+
+	// A mix of cases
+	AssertGTC("", "n", False)
+	AssertGTC("", "aabab", False)
+	AssertGTC("", "ar", False)
+	AssertGTC("", "aaar", False)
+	AssertGTC("", "XYXYXYZYXYz", False)
+	AssertGTC("", "missisSIPpi", False)
+	AssertGTC("", "mississipPI", False)
+	AssertGTC("", "xyxyxyxyz", False)
+	AssertGTC("", "miSsissippi", False)
+	AssertGTC("", "miSsisSippi", False)
+	AssertGTC("", "abAbac", False)
+	AssertGTC("", "abAbac", False)
+	AssertGTC("", "aAazz", False)
+	AssertGTC("", "A12b123", False)
+	AssertGTC("", "a12B12", False)
+	AssertGTC("", "oWn", False)
+	AssertGTC("", "bLah", False)
+	AssertGTC("", "bLaH", False)
+
+	// Both strings empty
+	AssertGTC("", "", True)
+
+	// Another simple case
+	AssertGTC("abc", "", False)
+
+	// Cases with repeating character sequences.
+	AssertGTC("abcccd", "", False)
+	AssertGTC("mississipissippi", "", False)
+	AssertGTC("xxxxzzzzzzzzyf", "", False)
+	AssertGTC("xxxxzzzzzzzzyf", "", False)
+	AssertGTC("xxxxzzzzzzzzyf", "", False)
+	AssertGTC("xxxxzzzzzzzzyf", "", False)
+	AssertGTC("xyxyxyzyxyz", "", False)
+	AssertGTC("mississippi", "", False)
+	AssertGTC("xyxyxyxyz", "", False)
+	AssertGTC("m ississippi", "", False)
+	AssertGTC("ababac", "", False)
+	AssertGTC("dababac", "", False)
+	AssertGTC("aaazz", "", False)
+	AssertGTC("a12b12", "", False)
+	AssertGTC("a12b12", "", False)
+	AssertGTC("a12b12", "", False)
+
+	// A mix of cases
+	AssertGTC("n", "", False)
+	AssertGTC("aabab", "", False)
+	AssertGTC("ar", "", False)
+	AssertGTC("aar", "", False)
+	AssertGTC("XYXYXYZYXYz", "", False)
+	AssertGTC("missisSIPpi", "", False)
+	AssertGTC("mississipPI", "", False)
+	AssertGTC("xyxyxyxyz", "", False)
+	AssertGTC("miSsissippi", "", False)
+	AssertGTC("miSsissippi", "", False)
+	AssertGTC("abAbac", "", False)
+	AssertGTC("abAbac", "", False)
+	AssertGTC("aAazz", "", False)
+	AssertGTC("A12b12", "", False)
+	AssertGTC("a12B12", "", False)
+	AssertGTC("oWn", "", False)
+	AssertGTC("bLah", "", False)
+	AssertGTC("bLah", "", False)
+EndFunction
+
+Function AssertGTC(compare$, pattern$, expected, case_sensitive=1) // NOTE!! Swapped parameter order compare,pattern vs. pattern,compare! This is to make it easier to compare with tests described in http://developforperformance.com/MatchingWildcards_AnImprovedAlgorithmForBigData.html
+	Dim not_$ : If Not expected Then not_ = "n"+"ot "
+	Assert(expected=GeneralTextCompare(pattern, compare, case_sensitive), "GeneralTextCompare(a$, b$) should "+not_+"match.", "", pattern,compare) // TODO: Remove the "" parameter if cbUnit drops the default_message parameter.
+EndFunction

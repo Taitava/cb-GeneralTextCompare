@@ -1,0 +1,90 @@
+
+
+// 
+// This function is based on an algorithm and a C function named GeneraltextCompare written by Kirk J. Krauss (published on 2008-08-26).
+// The C function was copied on 2021-03-09 from https://www.drdobbs.com/architecture-and-design/matching-wildcards-an-algorithm/210200888 (it's the version under headline "Improvement from a Reader").
+// The C function was ported to CoolBasic by me, Jarkko 'Jare' Linnanvirta, and some parts of the code - such as part of the comments - are the same as in the original C function.
+// (Krauss has also made a newer version of the function, which is faster for big data, but it's also longer and I think this one is good enugh for CoolBasic and simple stuff. The newer C function can be found here: http://developforperformance.com/MatchingWildcards_AnImprovedAlgorithmForBigData.html )
+//
+// This function compares text strings, one of which can have wildcards ("*").
+// Parameters:
+// - pattern: A (potentially) corresponding string with wildcards. (aka "wild" or "w" for short).
+// - compare: A string without wildcards. (aka "tame" or "t" for short).
+// - case_sensitive: By default, match on 'X' vs 'x'.
+// - alternative_terminator: For function names, for example, you can stop at the first '('.
+Function GeneralTextCompare(pattern$, compare$, case_sensitive=0, alternative_terminator$="")
+	
+	// Support Force Variable Declaration
+	Dim t_character$, w_character$, t_index, w_index, skip
+	Dim after_last_wild // the location after the last "*", if we’ve encountered one
+	Dim after_last_tame // the location in the tame string, from which we started after last wildcard
+	
+	t_index = 1
+	w_index = 1
+	
+	If Not case_sensitive Then
+		pattern = Lower(pattern)
+		compare = Lower(compare)
+	EndIf
+	
+	// Walk the text strings one character at a time.
+	Repeat
+		skip = False
+		t_character = Mid(compare, t_index,1)
+		w_character = Mid(pattern, w_index,1)
+		
+		// How do you match a unique text String?
+		If ""=t_character Or t_character = alternative_terminator Then
+				// Easy: unique up on it!
+				If ""=w_character Or w_character = alternative_terminator Then
+					Return True                                                                   // "x" matches "x"
+				ElseIf w_character = "*" Then
+					w_index + 1
+					skip = True // Continue to next iteration in Repeat                           // "x*" matches "x" or "xy"
+				ElseIf after_last_tame Then
+					If ""=Mid(compare,after_last_tame,1) Or Mid(compare,after_last_tame,1) = alternative_terminator Then
+						Return False
+					EndIf
+					t_index = after_last_tame : after_last_tame + 1
+					w_index = after_last_wild
+					skip = True // Continue to next iteration in Repeat
+				Else
+					Return False                                                                  // "x" doesn't match "xy"
+				EndIf
+		Else
+
+			// How do you match a tame text string?
+			If t_character <> w_character Then
+				// the tame way: unique up on it!
+				If w_character = "*" Then
+					w_index + 1
+					after_last_wild = w_index
+					after_last_tame = t_index
+					w_character = Mid(pattern, w_index,1)
+
+					If ""=w_character Or w_character = alternative_terminator Then
+						Return True                                                               // "*" matches "x"
+					EndIf
+					skip = True // Continue to next iteration in Repeat                           // "*y" matches "xy"
+				ElseIf after_last_wild Then
+					If after_last_wild <> w_index Then
+						w_index = after_last_wild
+						w_character = Mid(pattern, w_index,1)
+
+						If (t_character = w_character) Then
+							w_index + 1
+						EndIf
+					EndIf
+					t_index + 1
+					skip = True // Continue to next iteration in Repeat                           // "*sip*" matches "mississippi"
+				Else
+					Return False                                                                  // "x" doesn't match "y"
+				EndIf
+			EndIf
+		EndIf
+		If Not skip Then
+			t_index + 1
+			w_index + 1
+		EndIf
+	Forever
+EndFunction
