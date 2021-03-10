@@ -1,9 +1,9 @@
 
-// This function is copied 2021-03-10 from http://developforperformance.com/MatchingWildcards_AnImprovedAlgorithmForBigData.html (it's the version in "Listing Two", FastWildComparePortable() ).
+// This function is modified from from http://developforperformance.com/MatchingWildcards_AnImprovedAlgorithmForBigData.html (it's the version in "Listing Two", FastWildComparePortable(), read 2021-03-10).
 // Original author: Kirk J Krauss
-
-// TODO: Modify the function to work in CoolBasic.
-// TODO: Rename the function to PatternCompare().
+// Modified by: Jarkko 'Jare' Linnanvirta
+// Modifications: Ported the function from C++ to CoolBasic. Renamed the function from FastWildComparePortable() to PatternCompare().
+// Below is the original function's copyright and license.
 
 // Copyright 2018 IBM Corporation
 // 
@@ -18,166 +18,166 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+
+
+
 //
-// Slower but portable version of FastWildCompare().  Performs no direct 
-// pointer manipulation.  Can work with wide-character text strings.  Use 
-// only with null-terminated strings.
-//
-// Compares two text strings.  Accepts '?' as a single-character wildcard.  
-// For each '*' wildcard, seeks out a matching sequence of any characters 
+// Compares two text strings. Accepts "?" as a single-character wildcard.
+// For each "*" wildcard, seeks out a matching sequence of any characters 
 // beyond it.  Otherwise compares the strings a character at a time.
 //
-bool FastWildComparePortable(char *strWild, char *strTame)
-{
-    int  iWild = 0;     // Index for both tame and wild strings in upper loop
-    int  iTame;         // Index for tame string, set going into lower loop
-    int  iWildSequence; // Index for prospective match after '*' (wild string)
-    int  iTameSequence; // Index for prospective match (tame string)
- 
-    // Find a first wildcard, if one exists, and the beginning of any  
-    // prospectively matching sequence after it.
-    do
-    {
-        // Check for the end from the start.  Get out fast, if possible.
-        if (!strTame[iWild])
-        {
-            if (strWild[iWild])
-            {
-                while (strWild[iWild++] == '*')
-                {
-                    if (!strWild[iWild])
-                    {
-                        return true;   // "ab" matches "ab*".
-                    }
-                }
- 
-                return false;          // "abcd" doesn't match "abc".
-            }
-            else
-            {
-                return true;           // "abc" matches "abc".
-            }
-        }
-        else if (strWild[iWild] == '*')
-        {
-            // Got wild: set up for the second loop and skip on down there.
-            iTame = iWild;
- 
-            while (strWild[++iWild] == '*')
-            {
-                continue;
-            }
- 
-            if (!strWild[iWild])
-            {
-                return true;           // "abc*" matches "abcd".
-            }
- 
-            // Search for the next prospective match.
-            if (strWild[iWild] != '?')
-            {
-                while (strWild[iWild] != strTame[iTame])
-                {
-                    if (!strTame[++iTame])
-                    {
-                        return false;  // "a*bc" doesn't match "ab".
-                    }
-                }
-            }
- 
-            // Keep fallback positions for retry in case of incomplete match.
-            iWildSequence = iWild;
-            iTameSequence = iTame;
-            break;
-        }
-        else if (strWild[iWild] != strTame[iWild] && strWild[iWild] != '?')
-        {
-            return false;              // "abc" doesn't match "abd".
-        }
- 
-        ++iWild;                       // Everything's a match, so far.
-    } while (true);
- 
-    // Find any further wildcards and any further matching sequences.
-    do
-    {
-        if (strWild[iWild] == '*')
-        {
-            // Got wild again.
-            while (strWild[++iWild] == '*')
-            {
-                continue;
-            }
- 
-            if (!strWild[iWild])
-            {
-                return true;           // "ab*c*" matches "abcd".
-            }
- 
-            if (!strTame[iTame])
-            {
-                return false;          // "*bcd*" doesn't match "abc".
-            }
- 
-            // Search for the next prospective match.
-            if (strWild[iWild] != '?')
-            {
-                while (strWild[iWild] != strTame[iTame])
-                {
-                    if (!strTame[++iTame])
-                    {
-                        return false;  // "a*b*c" doesn't match "ab".
-                    }
-                }
-            }
- 
-            // Keep the new fallback positions.
-            iWildSequence = iWild;
-            iTameSequence = iTame;
-        }
-        else if (strWild[iWild] != strTame[iTame] && strWild[iWild] != '?')
-        {
-            // The equivalent portion of the upper loop is really simple.
-            if (!strTame[iTame])
-            {
-                return false;          // "*bcd" doesn't match "abc".
-            }
- 
-            // A fine time for questions.
-            while (strWild[iWildSequence] == '?')
-            {
-                ++iWildSequence;
-                ++iTameSequence;
-            }
- 
-            iWild = iWildSequence;
- 
-            // Fall back, but never so far again.
-            while (strWild[iWild] != strTame[++iTameSequence])
-            {
-                if (!strTame[iTameSequence])
-                {
-                    return false;      // "*a*b" doesn't match "ac".
-                }
-            }
- 
-            iTame = iTameSequence;
-        }
- 
-        // Another check for the end, at the end.
-        if (!strTame[iTame])
-        {
-            if (!strWild[iWild])
-            {
-                return true;           // "*bc" matches "abc".
-            }
-            else
-            {
-                return false;          // "*bc" doesn't match "abcd".
-            }
-        }
- 
-        ++iWild;                       // Everything's still a match.
-        ++iTame;
-    } while (true);
-}
+Function PatternCompare(strWild$, strTame$)
+	
+	Dim iWild         // Index for both tame and wild strings in upper loop
+	Dim iTame         // Index for tame string, set going into lower loop
+	Dim iWildSequence // Index for prospective match after "*" (wild string)
+	Dim iTameSequence // Index for prospective match (tame string)
+	iWild = 1 : iTame = 1
+	// Find a first wildcard, if one exists, and the beginning of any
+	// prospectively matching sequence after it.
+	Repeat
+		
+		// Check for the end from the start.  Get out fast, if possible.
+		If "" = Mid(strTame, iWild,1) Then
+			
+			If Mid(strWild, iWild,1) Then
+				
+				While Mid(strWild, iWild,1) = "*"
+					iWild+1
+					If "" = Mid(strWild, iWild,1) Then
+					
+						Return True   // "ab" matches "ab*".
+					EndIf
+				Wend : iWild+1 // +1 also here because when the while condition gets False, the upper increment won't happen, but an increment is still needed because that's how the original C++ function worked.
+				
+				Return False          // "abcd" doesn't match "abc".
+			
+			Else
+			
+				Return True           // "abc" matches "abc".
+			EndIf
+		
+		ElseIf Mid(strWild, iWild,1) = "*" Then
+			
+			// Got wild: set up for the second loop and skip on down there.
+			iTame = iWild
+			iWild + 1
+			While Mid(strWild, iWild,1) = "*"
+				iWild + 1
+				
+			Wend
+			
+			If "" = Mid(strWild, iWild,1) Then
+			
+				Return True           // "abc*" matches "abcd".
+			EndIf
+	
+			// Search for the next prospective match.
+			If Mid(strWild, iWild,1) <> "?" Then
+			
+				While Mid(strWild, iWild,1) <> Mid(strTame, iTame,1)
+					iTame + 1
+					If "" = Mid(strTame, iTame,1) Then
+					
+						Return False  // "a*bc" doesn't match "ab".
+					EndIf
+				Wend
+			EndIf
+	
+			// Keep fallback positions for retry in case of incomplete match.
+			iWildSequence = iWild
+			iTameSequence = iTame
+			Exit
+		
+		ElseIf Mid(strWild, iWild,1) <> Mid(strTame, iWild,1) And Mid(strWild, iWild,1) <> "?" Then
+			
+			Return False              // "abc" doesn't match "abd".
+		EndIf
+		
+		iWild + 1                     // Everything's a match, so far.
+	Forever
+	
+	// Find any further wildcards and any further matching sequences.
+	Repeat
+		
+		If Mid(strWild, iWild,1) = "*" Then
+			
+			// Got wild again.
+			iWild+1 : While Mid(strWild, iWild,1) = "*"
+			
+				iWild+1
+			Wend
+			
+			If "" = Mid(strWild, iWild,1) Then
+			
+				Return True           // "ab*c*" matches "abcd".
+			EndIf
+	
+			If "" = Mid(strTame, iTame,1) Then
+			
+				Return False          // "*bcd*" doesn't match "abc".
+			EndIf
+	
+			// Search for the next prospective match.
+			If Mid(strWild, iWild,1) <> "?" Then
+			
+				While Mid(strWild, iWild,1) <> Mid(strTame, iTame,1)
+					iTame + 1
+					If "" = Mid(strTame, iTame,1) Then
+					
+						Return False  // "a*b*c" doesn't match "ab".
+					EndIf
+				Wend
+			EndIf
+	
+			// Keep the new fallback positions.
+			iWildSequence = iWild
+			iTameSequence = iTame
+		
+		ElseIf Mid(strWild, iWild,1) <> Mid(strTame, iTame,1) And Mid(strWild, iWild,1) <> "?" Then
+			
+			// The equivalent portion of the upper loop is really simple.
+			If "" = Mid(strTame, iTame,1) Then
+			
+				Return False          // "*bcd" doesn't match "abc".
+			EndIf
+	
+			// A fine time for questions.
+			While Mid(strWild, iWildSequence,1) = "?"
+			
+				iWildSequence + 1
+				iTameSequence + 1
+			Wend
+	
+			iWild = iWildSequence
+	
+			// Fall back, but never so far again.
+			iTameSequence+1 : While Mid(strWild, iWild,1) <> Mid(strTame, iTameSequence,1)
+				
+				If "" = Mid(strTame, iTameSequence,1) Then
+				
+					Return False      // "*a*b" doesn't match "ac".
+				EndIf
+			iTameSequence+1 : Wend
+	
+			iTame = iTameSequence
+		EndIf
+		
+		// Another check for the end, at the end.
+		If "" = Mid(strTame, iTame,1) Then
+			
+			If "" = Mid(strWild, iWild,1) Then
+			
+				Return True           // "*bc" matches "abc".
+			
+			Else
+			
+				Return False          // "*bc" doesn't match "abcd".
+			EndIf
+		EndIf
+		
+		iWild + 1                     // Everything's still a match.
+		iTame + 1
+	Forever
+EndFunction
