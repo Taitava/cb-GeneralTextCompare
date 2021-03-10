@@ -1,10 +1,10 @@
 
 
 // 
-// This function is based on an algorithm and a C function named GeneraltextCompare written by Kirk J. Krauss (published on 2008-08-26).
-// The C function was copied on 2021-03-09 from https://www.drdobbs.com/architecture-and-design/matching-wildcards-an-algorithm/210200888 (it's the version under headline "Improvement from a Reader").
-// The C function was ported to CoolBasic by me, Jarkko 'Jare' Linnanvirta, and some parts of the code - such as part of the comments - are the same as in the original C function.
-// (Krauss has also made a newer version of the function, which is faster for big data, but it's also longer and I think this one is good enugh for CoolBasic and simple stuff. The newer C function can be found here: http://developforperformance.com/MatchingWildcards_AnImprovedAlgorithmForBigData.html )
+// This function is based on an algorithm and a C++ function named GeneraltextCompare written by Kirk J. Krauss (published on 2008-08-26).
+// The C++ function was copied on 2021-03-09 from https://www.drdobbs.com/architecture-and-design/matching-wildcards-an-algorithm/210200888 (it's the version under headline "Improvement from a Reader").
+// The C++ function was ported to CoolBasic by me, Jarkko 'Jare' Linnanvirta, and some parts of the code - such as part of the comments - are the same as in the original C++ function.
+// (Krauss has also made a newer version of the function, which is faster for big data, but it's also longer and I think this one is good enugh for CoolBasic and simple stuff. The newer C++ function can be found here: http://developforperformance.com/MatchingWildcards_AnImprovedAlgorithmForBigData.html )
 //
 // This function compares text strings, one of which can have wildcards ("*").
 // Parameters:
