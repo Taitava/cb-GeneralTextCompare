@@ -25,7 +25,7 @@ Examples:
 
 ## Modifying and contributing
 You can modify the function and create [pull requests](https://github.com/Taitava/cb-PatternCompare/pulls) to discuss about merging your changes to this repository. Just a few things to consider if you are going to modify the function:
-- Write to `PatternCompare.cb` comments about what you have changed. Git commit messages are not enough, because the original C++ function's license requires that modifications need to be documented. Write the same information to the [Author](#Authors) section of this readme document.
+- Write to `PatternCompare.cb` comments about what you have changed. Git commit messages are not enough, because the original C++ function's license requires that modifications need to be documented. Write the same information to the [Author](#Author) section of this readme document.
 - Write some unit tests that test that the feature you have implemented works the way you mean it to work. Even if it's a simple feature/change. Unit tests can be run with [cbUnit](https://github.com/Taitava/cbUnit). You can also ask me for help with creating unit tests.
 - Discuss your modification idea in the [issues](https://github.com/Taitava/cb-PatternCompare/issues) before creating a pull request.
 
