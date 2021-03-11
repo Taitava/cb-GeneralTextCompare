@@ -303,6 +303,9 @@ Function test_extra()
 	AssertPatternCompare("abbc", "a|c", True, True, "|?") // | Should work As a multi character wildcard.
 	AssertPatternCompare("abcd*?", "+c-*?", True, True, "+-") // * ? should Not be wildcards, instead + is a multi character wildcard And - is a single character wildcard.
 	
+	// A Case-sensitive algorithm test. (Copied and modified from "Case-insensitive algorithm test" in Function test_Wild() )
+	AssertPatternCompare("mississippi", "*issip*PI", False, True) // Should Not match, because Case-sensitivity is True.
+	
 EndFunction
 
 Function AssertPatternCompare(strTame$, strWild$, expected, case_sensitive=1, wildcards$="*?") // NOTE!! Swapped parameter order strTame,strWild vs. strWild,strTame! This is to make it easier to compare with original tests described in http://developforperformance.com/MatchingWildcards_AnImprovedAlgorithmForBigData.html
