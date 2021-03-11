@@ -294,6 +294,5 @@ EndFunction
 
 Function AssertPatternCompare(strTame$, strWild$, expected, case_sensitive=1) // NOTE!! Swapped parameter order strTame,strWild vs. strWild,strTame! This is to make it easier to compare with original tests described in http://developforperformance.com/MatchingWildcards_AnImprovedAlgorithmForBigData.html
 	Dim not_$ : If Not expected Then not_ = "n"+"ot "
-	// TODO: Implement case_sensitive
-	Assert(expected=PatternCompare(strWild, strTame), "PatternCompare(a$, b$) should "+not_+"match.", "", strWild,strTame) // TODO: Remove the "" parameter if cbUnit drops the default_message parameter.
+	Assert(expected=PatternCompare(strWild, strTame, case_sensitive), "PatternCompare(a$, b$, c$) should "+not_+"match.", "", strWild,strTame,case_sensitive) // TODO: Remove the "" parameter if cbUnit drops the default_message parameter.
 EndFunction

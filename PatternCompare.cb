@@ -2,7 +2,10 @@
 // This function is modified from from http://developforperformance.com/MatchingWildcards_AnImprovedAlgorithmForBigData.html (it's the version in "Listing Two", FastWildComparePortable(), read 2021-03-10).
 // Original author: Kirk J Krauss
 // Modified by: Jarkko 'Jare' Linnanvirta
-// Modifications: Ported the function from C++ to CoolBasic. Renamed the function from FastWildComparePortable() to PatternCompare().
+// Modifications:
+//  - Ported the function from C++ to CoolBasic.
+//  - Renamed the function from FastWildComparePortable() to PatternCompare().
+//  - Added the case_sensitive parameter.
 // Below is the original function's copyright and license.
 
 // Copyright 2018 IBM Corporation
@@ -27,12 +30,14 @@
 // For each "*" wildcard, seeks out a matching sequence of any characters 
 // beyond it.  Otherwise compares the strings a character at a time.
 //
-Function PatternCompare(strWild$, strTame$)
+Function PatternCompare(strWild$, strTame$, case_sensitive=1)
 	
 	Dim iWild : iWild=1 // Index for both tame and wild strings in upper loop
 	Dim iTame : iTame=1 // Index for tame string, set going into lower loop
 	Dim iWildSequence   // Index for prospective match after "*" (wild string)
 	Dim iTameSequence   // Index for prospective match (tame string)
+	
+	If Not case_sensitive Then strWild = Lower(strWild) : strTame = Lower(strTame)
 	
 	// Find a first wildcard, if one exists, and the beginning of any
 	// prospectively matching sequence after it.
