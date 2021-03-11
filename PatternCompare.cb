@@ -8,7 +8,8 @@
 //  - Added the case_sensitive parameter.
 // Below is the original function's copyright and license.
 
-// Copyright 2018 IBM Corporation
+// Porting to CoolBasic and modifications (C) 2021 Jarkko Linnanvirta
+// Original C++ function Copyright 2018 IBM Corporation 
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.

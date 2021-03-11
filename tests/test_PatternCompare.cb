@@ -2,9 +2,12 @@
 // These tests are copied 2021-03-09 from http://developforperformance.com/MatchingWildcards_AnImprovedAlgorithmForBigData.html And modified For Coolbasic & cbUnit by Jarkko Linnanvirta.
 // The tests can be run with cbUnit: https://github.com/Taitava/cbUnit
 //
-// Copyright and license of the original tests:
+// Modifications:
+//  - Ported the tests to CoolBasic and modified them to work with cbUnit.
+//  - Added new tests in Function test_extra().
 //
-// Copyright 2018 IBM Corporation
+// Porting to CoolBasic and modifications (C) 2021 Jarkko Linnanvirta
+// Original C++ tests Copyright 2018 IBM Corporation
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
