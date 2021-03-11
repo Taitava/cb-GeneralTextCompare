@@ -1,5 +1,5 @@
 # PatternCompare()
-This is a string comparison function for [CoolBasic](https://www.coolbasic.com), ported from [a C++ function called *FastWildCompare()* by K. J. Krauss](http://developforperformance.com/MatchingWildcards_AnImprovedAlgorithmForBigData.html).
+This is a string comparison function for [CoolBasic](https://www.coolbasic.com), ported from [a C++ function called *FastWildComparePortable()* by K. J. Krauss](http://developforperformance.com/MatchingWildcards_AnImprovedAlgorithmForBigData.html).
 
 `PatternCompare()` is a function that can be used to check if a string matches a certain *pattern*. A pattern can consist of *regular characters* and *wildcard characters*. `*` and `?` are wildcard characters. The former can match with any number of characters (including no characters at all). The latter can only match with one character. You can change the wildcard characters to be something else than `*`/`?`.
 
@@ -96,6 +96,6 @@ I considered this approach first, and maybe it would have made some of the condi
 
 
 ## Author
-- [The original C++ function called *FastWildCompare()* is done by K. J. Krauss](http://developforperformance.com/MatchingWildcards_AnImprovedAlgorithmForBigData.html).
+- [The original C++ function called *FastWildComparePortable()* is made by K. J. Krauss](http://developforperformance.com/MatchingWildcards_AnImprovedAlgorithmForBigData.html).
 - Porting to CoolBasic and other modifications are done by me, Jarkko Linnanvirta.
 - License details can be found in the same file with the function definition.
