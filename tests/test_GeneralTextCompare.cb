@@ -21,8 +21,6 @@
 
 Include "PatternCompare.cb"
 
-// Note: All single character wildcard tests are commented out (with ' ) because our version of GTC does not support single character wild cards. ? = single character wild card.
-
 Function test_Wild()
 	
 	// Case with first wildcard After total match.
@@ -50,7 +48,7 @@ Function test_Wild()
 	AssertPatternCompare("a12b12", "*12*12*", True)
 	
 	// From DDJ reader Andy Belf
-	'AssertPatternCompare("caaab", "*a?b", True)
+	AssertPatternCompare("caaab", "*a?b", True)
 	
 	// Additional cases where the '*' char appears in the tame string.
 	AssertPatternCompare("*", "*", True)
@@ -77,28 +75,28 @@ Function test_Wild()
 	AssertPatternCompare("bLah", "bLaH", False)
 
 	// Simple mixed wildcard tests suggested by Marlin Deckert.
-	'AssertPatternCompare("a", "*?", True)
-	'AssertPatternCompare("ab", "*?", True)
-	'AssertPatternCompare("abc", "*?", True)
+	AssertPatternCompare("a", "*?", True)
+	AssertPatternCompare("ab", "*?", True)
+	AssertPatternCompare("abc", "*?", True)
 
 	// More mixed wildcard tests including coverage for False positives.
-	'AssertPatternCompare("a", "??", False)
-	'AssertPatternCompare("ab", "?*?", True)
-	'AssertPatternCompare("ab", "*?*?*", True)
-	'AssertPatternCompare("abc", "?**?*?", True)
-	'AssertPatternCompare("abc", "?**?*&?", False)
-	'AssertPatternCompare("abcd", "?b*??", True)
-	'AssertPatternCompare("abcd", "?a*??", False)
-	'AssertPatternCompare("abcd", "?**?c?", True)
-	'AssertPatternCompare("abcd", "?**?d?", False)
-	'AssertPatternCompare("abcde", "?*b*?*d*?", True)
+	AssertPatternCompare("a", "??", False)
+	AssertPatternCompare("ab", "?*?", True)
+	AssertPatternCompare("ab", "*?*?*", True)
+	AssertPatternCompare("abc", "?**?*?", True)
+	AssertPatternCompare("abc", "?**?*&?", False)
+	AssertPatternCompare("abcd", "?b*??", True)
+	AssertPatternCompare("abcd", "?a*??", False)
+	AssertPatternCompare("abcd", "?**?c?", True)
+	AssertPatternCompare("abcd", "?**?d?", False)
+	AssertPatternCompare("abcde", "?*b*?*d*?", True)
 
 	// Single-character-match cases.
-	'AssertPatternCompare("bLah", "bL?h", True)
-	'AssertPatternCompare("bLaaa", "bLa?", False)
-	'AssertPatternCompare("bLah", "bLa?", True)
-	'AssertPatternCompare("bLaH", "?Lah", False)
-	'AssertPatternCompare("bLaH", "?LaH", True)
+	AssertPatternCompare("bLah", "bL?h", True)
+	AssertPatternCompare("bLaaa", "bLa?", False)
+	AssertPatternCompare("bLah", "bLa?", True)
+	AssertPatternCompare("bLaH", "?Lah", False)
+	AssertPatternCompare("bLaH", "?LaH", True)
 
 	// Many-wildcard scenarios.
 	AssertPatternCompare("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab", "a*a*a*a*a*a*aa*aaa*a*a*b", True)
@@ -123,8 +121,8 @@ Function test_Wild()
 	AssertPatternCompare("mississippi", "*issip*PI", True, False)
 
 	// Tests suggested by other DDJ readers
-	'AssertPatternCompare("", "?", False)
-	'AssertPatternCompare("", "*?", False)
+	AssertPatternCompare("", "?", False)
+	AssertPatternCompare("", "*?", False)
 	AssertPatternCompare("", "", True)
 	AssertPatternCompare("a", "", False)
 EndFunction
@@ -145,7 +143,7 @@ Function test_Tame()
 	AssertPatternCompare("mississippi", "mississippi", True)
 	AssertPatternCompare("xyxyxyxyz", "xyxyxyxyz", True)
 	AssertPatternCompare("m ississippi", "m ississippi", True)
-	'AssertPatternCompare("ababac", "ababac?", False)
+	AssertPatternCompare("ababac", "ababac?", False)
 	AssertPatternCompare("dababac", "ababac", False)
 	AssertPatternCompare("aaazz", "aaazz", True)
 	AssertPatternCompare("a12b12", "1212", False)
@@ -174,20 +172,20 @@ Function test_Tame()
 
 	// Single '?' cases.
 	AssertPatternCompare("a", "a", True)
-	'AssertPatternCompare("ab", "a?", True)
-	'AssertPatternCompare("abc", "ab?", True)
+	AssertPatternCompare("ab", "a?", True)
+	AssertPatternCompare("abc", "ab?", True)
 
 	// Mixed '?' cases.
-	'AssertPatternCompare("a", "??", False)
-	'AssertPatternCompare("ab", "??", True)
-	'AssertPatternCompare("abc", "???", True)
-	'AssertPatternCompare("abcd", "????", True)
-	'AssertPatternCompare("abc", "????", False)
-	'AssertPatternCompare("abcd", "?b??", True)
-	'AssertPatternCompare("abcd", "?a??", False)
-	'AssertPatternCompare("abcd", "??c?", True)
-	'AssertPatternCompare("abcd", "??d?", False)
-	'AssertPatternCompare("abcde", "?b?d*?", True)
+	AssertPatternCompare("a", "??", False)
+	AssertPatternCompare("ab", "??", True)
+	AssertPatternCompare("abc", "???", True)
+	AssertPatternCompare("abcd", "????", True)
+	AssertPatternCompare("abc", "????", False)
+	AssertPatternCompare("abcd", "?b??", True)
+	AssertPatternCompare("abcd", "?a??", False)
+	AssertPatternCompare("abcd", "??c?", True)
+	AssertPatternCompare("abcd", "??d?", False)
+	AssertPatternCompare("abcde", "?b?d*?", True)
 
 	// Longer string scenarios.
 	AssertPatternCompare("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab", True)
@@ -201,9 +199,9 @@ Function test_Tame()
 	AssertPatternCompare("aaaaaaaaaaaaaaaa", "aaaaaaaaaaaaaaaaa", False)
 	AssertPatternCompare("abcabcdabcdeabcdefabcdefgabcdefghabcdefghiabcdefghijabcdefghijkabcdefghijklabcdefghijklmabcdefghijklmn", "abcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabc", False)
 	AssertPatternCompare("abcabcdabcdeabcdefabcdefgabcdefghabcdefghiabcdefghijabcdefghijkabcdefghijklabcdefghijklmabcdefghijklmn", "abcabcdabcdeabcdefabcdefgabcdefghabcdefghiabcdefghijabcdefghijkabcdefghijklabcdefghijklmabcdefghijklmn", True)
-	'AssertPatternCompare("abcabcdabcdabcabcd", "abcabc?abcabcabc", False)
-	'AssertPatternCompare("abcabcdabcdabcabcdabcdabcabcdabcabcabcd", "abcabc?abc?abcabc?abc?abc?bc?abc?bc?bcd", True)
-	'AssertPatternCompare("?abc?", "?abc?", True)
+	AssertPatternCompare("abcabcdabcdabcabcd", "abcabc?abcabcabc", False)
+	AssertPatternCompare("abcabcdabcdabcabcdabcdabcabcdabcabcabcd", "abcabc?abc?abcabc?abc?abc?bc?abc?bc?bcd", True)
+	AssertPatternCompare("?abc?", "?abc?", True)
 EndFunction
 
 Function test_Empty()
