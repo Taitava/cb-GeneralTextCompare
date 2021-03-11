@@ -1,7 +1,27 @@
 # PatternCompare()
 This is a string comparison function for [CoolBasic](https://www.coolbasic.com), ported from [a C++ function called *FastWildCompare()* by K. J. Krauss](http://developforperformance.com/MatchingWildcards_AnImprovedAlgorithmForBigData.html).
 
-**Actual user manual is still under development!**
+`PatternCompare()` is a function that can be used to check if a string matches a certain *pattern*. A pattern can consist of *regular characters* and *wildcard characters*. `*` and `?` are wildcard characters. The former can match with any number of characters (including no characters at all). The latter can only match with one character. You can change the wildcard characters to be something else than `*`/`?`.
+
+Examples:
+- Pattern  `"a*c"` matches `"abc"`.
+- Pattern  `"a?c"` matches `"abc"`.
+- Pattern  `"a*c"` matches `"azxc"` too.
+- Pattern `"a?c"`  does not match `"azxc"` because between `a` and `c` there are two characters instead of one character.
+- Pattern `"*"` matches `""`.
+- Pattern `"abc*"` matches `"abc"`.
+- Pattern `"?"` does not match `""`, because it explicitly requires one character.
+- Pattern `"abc?"` does not match `"abc"`.
+- Pattern `"ABC"` matches or does not match `"abc"`, depending how you want letter case differences be handled.
+
+## Usage
+1. Include the `PatternCompare()` function to your CoolBasic program with the following command: `Include "PatternCompare\PatternCompare.cb"`. (You do not need to include the unit test file located in the `tests` folder).
+2. Call the function like this: `PatternCompare(strWild$,strTame$, case_sensitive=1, wildcards$="*?")`. Parameters:
+	- `strWild$`: A pattern string. This can contain wildcards.
+	- `strTame$`: A comparison string. This is interpreted completely literally, meaning that if it happens to contain wildcards, they do not have any special meaning, they need to match the same way as other characters in this string.
+	- `case_sensitive=1`: If `True`, letters *A* and *a* (etc.) are considered different. Optional and defaults to `True`.
+	- `wildcards$="*?"`: A two-character string where the first character defines a *multi character wildcard* and the second character defines a *single character wildcard*. You can change the wildcards if you need to use `*` or `?` in your `strWild$` (pattern) string literally. Optional and defaults to `*?*`.
+3. The function returns either `True` (the strings matched) or `False` (the strings didn't match). The function can also trigger `MakeError`, but only if you set a bad value to `wildcards$`.
 
 ## Modifying and contributing
 You can modify the function and create [pull requests](https://github.com/Taitava/cb-PatternCompare/pulls) to discuss about merging your changes to this repository. Just a few things to consider if you are going to modify the function:
