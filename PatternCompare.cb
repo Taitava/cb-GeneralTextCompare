@@ -30,13 +30,23 @@
 // For each "*" wildcard, seeks out a matching sequence of any characters 
 // beyond it.  Otherwise compares the strings a character at a time.
 //
-Function PatternCompare(strWild$, strTame$, case_sensitive=1)
+// wildcards$ parameter: Defines a multi character wildcard (the first character, defaults to * ) and a single character wildcard (the second character, defaults to ? ). Must always have exactly two different characters.
+//
+Function PatternCompare(strWild$, strTame$, case_sensitive=1, wildcards$="*?")
 	
 	Dim iWild : iWild=1 // Index for both tame and wild strings in upper loop
 	Dim iTame : iTame=1 // Index for tame string, set going into lower loop
 	Dim iWildSequence   // Index for prospective match after "*" (wild string)
 	Dim iTameSequence   // Index for prospective match (tame string)
+	Dim asterisk$, questionmark$
 	
+	// Define wildcards
+	If Len(wildcards) <> 2 Then MakeError "PatternCompare(): wildcards$ parameter should contain eactly two characters. Now it contains: "+wildcards
+	asterisk = Left(wildcards,1)
+	questionmark = Right(wildcards,1)
+	If asterisk = questionmark Then MakeError "PatternCompare(): wildcards$ parameter should contain two _different_ characters. Now it contains: "+wildcards
+	
+	// Handle possible Case-insensitivity
 	If Not case_sensitive Then strWild = Lower(strWild) : strTame = Lower(strTame)
 	
 	// Find a first wildcard, if one exists, and the beginning of any
@@ -45,7 +55,7 @@ Function PatternCompare(strWild$, strTame$, case_sensitive=1)
 		// Check for the end from the start.  Get out fast, if possible.
 		If "" = Mid(strTame, iWild,1) Then
 			If Mid(strWild, iWild,1) Then
-				While Mid(strWild, iWild,1) = "*"
+				While Mid(strWild, iWild,1) = asterisk
 					iWild+1
 					If "" = Mid(strWild, iWild,1) Then
 						Return True   // "ab" matches "ab*".
@@ -58,12 +68,12 @@ Function PatternCompare(strWild$, strTame$, case_sensitive=1)
 				Return True           // "abc" matches "abc".
 			EndIf
 			
-		ElseIf Mid(strWild, iWild,1) = "*" Then
+		ElseIf Mid(strWild, iWild,1) = asterisk Then
 			// Got wild: set up for the second loop and skip on down there.
 			iTame = iWild
 			
 			iWild + 1
-			While Mid(strWild, iWild,1) = "*"
+			While Mid(strWild, iWild,1) = asterisk
 				iWild + 1
 			Wend
 			
@@ -72,7 +82,7 @@ Function PatternCompare(strWild$, strTame$, case_sensitive=1)
 			EndIf
 			
 			// Search for the next prospective match.
-			If Mid(strWild, iWild,1) <> "?" Then
+			If Mid(strWild, iWild,1) <> questionmark Then
 				While Mid(strWild, iWild,1) <> Mid(strTame, iTame,1)
 					iTame + 1
 					If "" = Mid(strTame, iTame,1) Then
@@ -86,7 +96,7 @@ Function PatternCompare(strWild$, strTame$, case_sensitive=1)
 			iTameSequence = iTame
 			Exit
 			
-		ElseIf Mid(strWild, iWild,1) <> Mid(strTame, iWild,1) And Mid(strWild, iWild,1) <> "?" Then
+		ElseIf Mid(strWild, iWild,1) <> Mid(strTame, iWild,1) And Mid(strWild, iWild,1) <> questionmark Then
 			Return False              // "abc" doesn't match "abd".
 		EndIf
 		
@@ -95,10 +105,10 @@ Function PatternCompare(strWild$, strTame$, case_sensitive=1)
 	
 	// Find any further wildcards and any further matching sequences.
 	Repeat
-		If Mid(strWild, iWild,1) = "*" Then
+		If Mid(strWild, iWild,1) = asterisk Then
 			// Got wild again.
 			iWild+1
-			While Mid(strWild, iWild,1) = "*"
+			While Mid(strWild, iWild,1) = asterisk
 				iWild+1
 			Wend
 			
@@ -111,7 +121,7 @@ Function PatternCompare(strWild$, strTame$, case_sensitive=1)
 			EndIf
 	
 			// Search for the next prospective match.
-			If Mid(strWild, iWild,1) <> "?" Then
+			If Mid(strWild, iWild,1) <> questionmark Then
 				While Mid(strWild, iWild,1) <> Mid(strTame, iTame,1)
 					iTame + 1
 					If "" = Mid(strTame, iTame,1) Then
@@ -124,14 +134,14 @@ Function PatternCompare(strWild$, strTame$, case_sensitive=1)
 			iWildSequence = iWild
 			iTameSequence = iTame
 			
-		ElseIf Mid(strWild, iWild,1) <> Mid(strTame, iTame,1) And Mid(strWild, iWild,1) <> "?" Then
+		ElseIf Mid(strWild, iWild,1) <> Mid(strTame, iTame,1) And Mid(strWild, iWild,1) <> questionmark Then
 			// The equivalent portion of the upper loop is really simple.
 			If "" = Mid(strTame, iTame,1) Then
 				Return False          // "*bcd" doesn't match "abc".
 			EndIf
 			
 			// A fine time for questions.
-			While Mid(strWild, iWildSequence,1) = "?"
+			While Mid(strWild, iWildSequence,1) = questionmark
 				iWildSequence + 1
 				iTameSequence + 1
 			Wend

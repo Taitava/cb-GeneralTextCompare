@@ -292,7 +292,20 @@ Function test_Empty()
 	AssertPatternCompare("bLah", "", False)
 EndFunction
 
-Function AssertPatternCompare(strTame$, strWild$, expected, case_sensitive=1) // NOTE!! Swapped parameter order strTame,strWild vs. strWild,strTame! This is to make it easier to compare with original tests described in http://developforperformance.com/MatchingWildcards_AnImprovedAlgorithmForBigData.html
+Function test_extra()
+	// These tests are Not copied from the original C++ Function's tests.
+	
+	// Test the ability To change wildcard characters
+	AssertPatternCompare("abc", "a?c", False, True, "*-") // ? Should Not be treated As a wildcard, As ? is now replaced with - in the wildcards$ parameter.
+	AssertPatternCompare("abc", "a*c", False, True, "-?") // * Should Not be treated As a wildcard, As * is now replaced with - in the wildcards$ parameter.
+	AssertPatternCompare("abc", "a-c", True, True, "*-") // - Should work As a single character wildcard.
+	AssertPatternCompare("abbc", "a-c", False, True, "*-") // - Should be a single character wildcard, so it should Not allow two b letters.
+	AssertPatternCompare("abbc", "a|c", True, True, "|?") // | Should work As a multi character wildcard.
+	AssertPatternCompare("abcd*?", "+c-*?", True, True, "+-") // * ? should Not be wildcards, instead + is a multi character wildcard And - is a single character wildcard.
+	
+EndFunction
+
+Function AssertPatternCompare(strTame$, strWild$, expected, case_sensitive=1, wildcards$="*?") // NOTE!! Swapped parameter order strTame,strWild vs. strWild,strTame! This is to make it easier to compare with original tests described in http://developforperformance.com/MatchingWildcards_AnImprovedAlgorithmForBigData.html
 	Dim not_$ : If Not expected Then not_ = "n"+"ot "
-	Assert(expected=PatternCompare(strWild, strTame, case_sensitive), "PatternCompare(a$, b$, c$) should "+not_+"match.", "", strWild,strTame,case_sensitive) // TODO: Remove the "" parameter if cbUnit drops the default_message parameter.
+	Assert(expected=PatternCompare(strWild, strTame, case_sensitive, wildcards$), "PatternCompare(a$, b$, c$, d$) should "+not_+"match.", "", strWild,strTame,case_sensitive,wildcards) // TODO: Remove the "" parameter if cbUnit drops the default_message parameter.
 EndFunction
